@@ -1,11 +1,14 @@
 # web98
 
+<a href="https://web98.koik.com.br" target="_blank"><img width="450" alt="web98 koik logo" src="images/web98-header.png" /></a>
+
+
 ![web98](images/output.gif)
 
 <p align="center"> it works like any other browser: type a URL or a search query, and it <strong>loads a page!</strong> </p>
 <p align="center">but in this case, the page isn’t coming from the internet. it’s coming from the AI.</p>
 
-this is an Astro-based reimplementation of the [Web98](https://github.com/nate-parrott/web98) “fantasy internet simulator,” built to run on the web and use OpenRouter as the LLM provider.
+this is an Astro-based reimplementation of the [Web98](https://github.com/nate-parrott/web98) “fantasy internet simulator”, built to run on the web and use OpenRouter as the LLM provider.
 
 ### test the demo here
 https://web98.koik.com.br
