@@ -1,0 +1,1618 @@
+---
+import FooterInner from '../components/FooterInner.astro';
+const title = "web98 - fantasy internet simulator";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{title}</title>
+    <style>
+      :root {
+        --bg: #f2ceb1;
+        --panel: #ffead9;
+        --panel-2: #ffead9;
+        --accent: #f17d78;
+        --accent-2: #f17c7891;
+        --text: #f17d78;
+        --text-strong: #f17d78;
+        --border: #f17d78;
+        --border-2: #f17d78;
+        --danger: #f17d78;
+        --icon: #685f7d;
+        --toolbar-h: 92px;
+        --footer-h: 40px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Courier New', monospace;
+      }
+
+      .app {
+        height: 100vh;
+        width: 100%;
+        overflow: hidden;
+        padding-top: var(--toolbar-h);
+        padding-bottom: var(--footer-h);
+      }
+
+      .toolbar-wrap {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 20;
+        background: transparent;
+        padding: 12px 0;
+      }
+
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px;
+        max-width: 1200px;
+        margin: 0 auto;
+        background: var(--panel);
+        border: 4px solid var(--border);
+        box-shadow: 8px 8px 0 #f17c7891;
+      }
+
+      .btn {
+        appearance: none;
+        border: 3px solid var(--border);
+        background: var(--panel);
+        color: var(--text);
+        height: 40px;
+        min-width: 40px;
+        padding: 0 14px;
+        border-radius: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease, color 0.1s ease;
+      }
+      .btn:hover:not(:disabled) {
+        background: var(--accent);
+        color: var(--bg);
+        box-shadow: 4px 4px 0 #f17c7891;
+        transform: translate(-2px, -2px);
+      }
+      .btn:active:not(:disabled) {
+        transform: translate(2px, 2px);
+        box-shadow: 0 0 0 #f17c7891;
+      }
+      .btn .hn {
+        color: var(--icon);
+        font-size: 20px;
+        display: inline-block;
+      }
+      .btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+      .btn-danger:hover {
+        background: var(--accent);
+        color: var(--bg);
+      }
+
+      .input-wrap {
+        position: relative;
+        flex: 1;
+        display: flex;
+        align-items: center;
+      }
+      .modal .input-wrap {
+        display: block;
+        width: 100%;
+      }
+
+      .address {
+        width: 100%;
+        height: 40px;
+        border-radius: 0;
+        border: 3px solid var(--border);
+        background: var(--panel);
+        outline: none;
+        color: var(--text);
+        padding: 0 12px;
+        font-size: 14px;
+        font-family: 'Courier New', monospace;
+        transition: box-shadow 0.2s;
+      }
+      .address:focus {
+        box-shadow: 0 0 12px #f17c7891;
+        background: #fff;
+        color: var(--text);
+      }
+
+      textarea.world:focus,
+      input.model:focus,
+      input.temp:focus {
+        background: #fff;
+        color: var(--text);
+        box-shadow: 0 0 12px #f17c7891;
+      }
+
+      /* Themed temperature slider */
+      input.temp {
+        -webkit-appearance: none;
+        appearance: none;
+        height: 36px;
+        background: transparent;
+        padding: 0;
+        border: none;
+      }
+      input.temp::-webkit-slider-runnable-track {
+        height: 8px;
+        background: var(--panel);
+        border: 3px solid var(--border);
+      }
+      input.temp::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        background: var(--accent);
+        border: 3px solid var(--border);
+        margin-top: -7px;
+        cursor: pointer;
+      }
+      input.temp::-moz-range-track {
+        height: 8px;
+        background: var(--panel);
+        border: 3px solid var(--border);
+      }
+      input.temp::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        background: var(--accent);
+        border: 3px solid var(--border);
+        cursor: pointer;
+      }
+      input.temp:focus::-webkit-slider-runnable-track,
+      input.temp:focus::-moz-range-track {
+        box-shadow: 0 0 12px #f17c7891;
+      }
+
+      .loading-bar {
+        position: relative;
+        height: 3px;
+        width: 100%;
+        overflow: hidden;
+        background: transparent;
+      }
+      .loading-bar .bar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 3px;
+        width: 0%;
+        background: var(--accent);
+        transition: width 0.25s ease;
+      }
+
+      .viewer-wrap {
+        position: fixed;
+        top: var(--toolbar-h);
+        left: 12px;
+        right: 12px;
+        bottom: var(--footer-h);
+        display: flex;
+        min-height: 0;
+      }
+      .viewer {
+        flex: 1;
+        width: 100%;
+        height: 100%;
+        border: 4px solid var(--border);
+        background: var(--panel);
+        box-shadow: 8px 8px 0 #f17c7891;
+      }
+
+      .suggestions {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: calc(100% + 6px);
+        width: min(800px, 96vw);
+        max-height: 45vh;
+        overflow: auto;
+        border: 3px solid var(--border);
+        background: var(--panel);
+        border-radius: 0;
+        padding: 6px 0;
+        box-shadow: 8px 8px 0 #f17c7891;
+        z-index: 30;
+      }
+      .sugg-item {
+        padding: 10px 12px;
+        font-size: 14px;
+        color: var(--text);
+        cursor: pointer;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .sugg-item:hover {
+        background: var(--accent);
+        color: var(--bg);
+      }
+      :global(#model-suggestions) {
+        left: 0;
+        transform: none;
+        width: 100%;
+        z-index: 9999;
+        max-height: 60vh;
+        overflow: auto;
+        border: 3px solid var(--border);
+        background: var(--panel);
+        border-radius: 0;
+        padding: 6px 0;
+        box-shadow: 8px 8px 0 #f17c7891;
+      }
+      :global(#model-suggestions .sugg-item) {
+        padding: 12px 12px !important;
+        border-bottom: 2px dashed var(--border) !important;
+        line-height: 1.5 !important;
+        cursor: pointer;
+      }
+      :global(#model-suggestions .sugg-item:last-child) {
+        border-bottom: 0 !important;
+      }
+      :global(#model-suggestions .sugg-item:hover) {
+        background: #f2ceb1 !important;
+        color: var(--text-strong) !important;
+      }
+
+      .sugg-placeholder {
+        position: relative;
+        overflow: hidden;
+        height: 14px;
+        margin: 8px 12px;
+        border: 2px dashed var(--border);
+        background: var(--panel);
+      }
+
+      .kbd {
+        font-family: 'Courier New', monospace;
+        font-size: 12px;
+        opacity: 0.8;
+        display: inline-block;
+        margin: 0 4px;
+      }
+
+      .footer {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: var(--footer-h);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        text-align: center;
+        border-top: 2px dashed var(--border);
+        background: var(--bg);
+      }
+
+      /* Settings modal */
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.25);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 40;
+      }
+      .modal-backdrop.show {
+        display: flex;
+      }
+      .modal {
+        width: min(720px, 92vw);
+        max-height: 85vh;
+        background: var(--panel);
+        border: 4px solid var(--border);
+        border-radius: 0;
+        box-shadow: 8px 8px 0 #f17c7891;
+        overflow: auto;
+      }
+      .modal-header {
+        padding: 10px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 3px solid var(--border);
+        background: var(--panel);
+      }
+      .modal-title {
+        margin: 0;
+        font-size: 16px;
+        color: var(--icon);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .modal-body {
+        padding: 12px;
+        display: grid;
+        gap: 14px;
+      }
+      .field {
+        display: grid;
+        gap: 6px;
+        color: var(--icon);
+      }
+      .label {
+        font-size: 12px;
+        opacity: 0.9;
+      }
+      textarea.world {
+        width: 100%;
+        min-height: 160px;
+        resize: vertical;
+        background: var(--panel);
+        color: var(--text);
+        border: 3px solid var(--border);
+        border-radius: 0;
+        padding: 8px 10px;
+        outline: none;
+        font-family: 'Courier New', monospace;
+      }
+      input.model,
+      input.temp {
+        height: 36px;
+        background: var(--panel);
+        color: var(--text);
+        border: 3px solid var(--border);
+        border-radius: 0;
+        padding: 0 10px;
+        outline: none;
+        font-family: 'Courier New', monospace;
+      }
+      input.model {
+        width: 100%;
+      }
+      .modal-footer {
+        padding: 10px 14px;
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+        border-top: 3px solid var(--border);
+        background: var(--panel);
+      }
+
+      .hint {
+        font-size: 12px;
+        opacity: 0.8;
+      }
+
+      /* Responsive */
+      @media (max-width: 720px) {
+        .toolbar {
+          gap: 6px;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@hackernoon/pixel-icon-library@1.0.6/fonts/iconfont.css" />
+    <link rel="icon" href="/koik%20icon%202024%20no-bg%20margin%20512px.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <div class="app">
+      <div class="toolbar-wrap">
+        <div class="toolbar">
+          <button
+            id="btn-back"
+            class="btn"
+            title="Back"
+            aria-label="Back"><i class="hn hn-arrow-left" aria-hidden="true"></i></button
+          >
+          <button
+            id="btn-forward"
+            class="btn"
+            title="Forward"
+            aria-label="Forward"><i class="hn hn-arrow-right" aria-hidden="true"></i></button
+          >
+          <button
+            id="btn-home"
+            class="btn"
+            title="Home"
+            aria-label="Home"><i class="hn hn-home" aria-hidden="true"></i></button
+          >
+
+          <div class="input-wrap">
+            <input
+              id="address"
+              class="address"
+              type="text"
+              placeholder="Search or type URL"
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <div id="suggestions" class="suggestions" style="display:none;"></div>
+          </div>
+
+          <button
+            id="btn-cancel"
+            class="btn btn-danger"
+            title="Cancel"
+            aria-label="Cancel"
+            style="display:none;"><i class="hn hn-times" aria-hidden="true"></i></button
+          >
+          <button
+            id="btn-settings"
+            class="btn"
+            title="World & Model"
+            aria-label="World & Model"><i class="hn hn-cog" aria-hidden="true"></i></button
+          >
+        </div>
+        <div class="loading-bar">
+          <div id="loading-bar" class="bar"></div>
+        </div>
+      </div>
+
+      <div class="viewer-wrap">
+        <iframe
+          id="viewer"
+          class="viewer"
+          title="Web98 Viewer"
+          referrerpolicy="no-referrer"
+          sandbox="allow-scripts allow-forms"></iframe>
+      </div>
+
+      <div class="footer">
+        <FooterInner /><span style="display:inline-block;margin:0 6px;">•</span> type a URL or search topic and press Enter. tip: use
+        the&nbsp;<span class="kbd">settings</span>&nbsp;to change the "world".
+      </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div
+      id="modal-backdrop"
+      class="modal-backdrop"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+    >
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">settings</h3>
+          <button id="btn-close-modal" class="btn" aria-label="Close"
+            >✕</button
+          >
+        </div>
+        <div class="modal-body">
+          <div class="field">
+            <label class="label" for="world">world description</label>
+            <textarea
+              id="world"
+              class="world"
+              placeholder="Describe the alternate universe..."></textarea>
+            <div class="hint">
+              the LLM will roleplay a web server from this world when generating
+              pages and suggestions.
+            </div>
+          </div>
+          <div class="field">
+            <label class="label" for="api-key">OpenRouter API Key</label>
+            <input
+              id="api-key"
+              class="model"
+              type="password"
+              placeholder="sk-or-..."
+              autocomplete="off"
+            />
+            <div class="hint">
+              stored locally (read our <a href="/privacy" style="color:inherit;text-decoration:underline;">privacy policy</a>).
+            </div>
+          </div>
+          <div class="field">
+            <label class="label" for="model">model (you can also use OpenRouter's presets, just type the ID)</label> <!-- TODO: make this a dropdown list with ability to write own custom models (OpenRouter allows for custom presets that won't appear on the list) -->
+            <div class="input-wrap">
+              <input
+                id="model"
+                class="model"
+                type="text"
+                autocomplete="off"
+                autocapitalize="off"
+                spellcheck="false"
+                inputmode="text"
+                placeholder="e.g. moonshotai/kimi-k2-0905 (leave empty to use server default)"
+              />
+              <div id="model-suggestions" class="suggestions" style="display:none;"></div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="label" for="temperature"
+              >temperature: <span id="temp-value" class="kbd">0.7</span></label
+            >
+            <input
+              id="temperature"
+              class="temp"
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              value="0.7"
+            />
+            <div class="hint">
+              higher is more creative, lower is more precise. 0.7 is a good
+              default.
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-reset-world" class="btn" title="Reset World"
+            >reset world</button
+          >
+          <button id="btn-save-modal" class="btn" title="Save">save</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { processUnicodeEmojis } from "/lib/emojis.js";
+      import { baseWorld, normalizeWorld } from "/lib/prompt.js";
+      // Defaults
+
+      // Elements
+      const addressEl = document.getElementById("address");
+      const backEl = document.getElementById("btn-back");
+      const fwdEl = document.getElementById("btn-forward");
+      const homeEl = document.getElementById("btn-home");
+      const cancelEl = document.getElementById("btn-cancel");
+      const settingsEl = document.getElementById("btn-settings");
+      const viewer = document.getElementById("viewer");
+      const suggestionsBox = document.getElementById("suggestions");
+      const loadingBar = document.getElementById("loading-bar");
+
+      const modalBackdrop = document.getElementById("modal-backdrop");
+      const btnCloseModal = document.getElementById("btn-close-modal");
+      const btnSaveModal = document.getElementById("btn-save-modal");
+      const btnResetWorld = document.getElementById("btn-reset-world");
+      const worldEl = document.getElementById("world");
+      const apiKeyEl = document.getElementById("api-key");
+      const modelEl = document.getElementById("model");
+      const modelSuggBox = document.getElementById("model-suggestions");
+      const tempEl = document.getElementById("temperature");
+      const tempVal = document.getElementById("temp-value");
+
+      // Simple in-memory cache (URL -> last generated HTML)
+      const htmlCache = new Map();
+
+      // History stacks
+      const backStack = [];
+      const fwdStack = [];
+
+      // Streaming state
+      let currentUrl = "";
+      let generatingFor = "";
+      let inflightController = null;
+      let loadingTick = null;
+      let progress = 0;
+      let streamFlushTimer = null;
+      let lastStreamPaint = 0;
+      let lastStreamLen = 0;
+
+      // Suggestions streaming state
+      let suggController = null;
+      let suggIsOpen = false;
+      let suggBase = [];
+      let suggKey = "";
+
+      // Model selector suggestions state
+      let modelSuggIsOpen = false;
+      let modelBaseList = [];
+      let modelSuggCleanup = null;
+
+      // Local storage keys
+      const LS_WORLD = "web98_world";
+      const LS_MODEL = "web98_model";
+      const LS_TEMP = "web98_temperature";
+      const LS_LAST_URL = "web98_last_url";
+
+      // Initialize
+      initSettings();
+      fetchModelList();
+      initToolbar();
+      initViewer();
+      maybeRestoreLastSession();
+
+      function initSettings() {
+        const world = normalizeWorld(localStorage.getItem(LS_WORLD) || "");
+        const model = (localStorage.getItem(LS_MODEL) || "").trim();
+        const temp = parseFloat(localStorage.getItem(LS_TEMP) || "0.7");
+
+        const apiKey = (localStorage.getItem("web98_api_key") || "").trim();
+
+        worldEl.value = world;
+        apiKeyEl.value = apiKey;
+        modelEl.value = model;
+        tempEl.value = String(isFinite(temp) ? temp : 0.7);
+        tempVal.textContent = tempEl.value;
+
+        tempEl.addEventListener("input", () => {
+          tempVal.textContent = tempEl.value;
+        });
+
+        btnSaveModal.addEventListener("click", () => {
+          localStorage.setItem(LS_WORLD, worldEl.value);
+          localStorage.setItem(LS_MODEL, modelEl.value);
+          localStorage.setItem(LS_TEMP, tempEl.value);
+          const key = (apiKeyEl.value || "").trim();
+          if (key) {
+            // store locally; not sent to server
+            window.__web98Key = key;
+            localStorage.setItem("web98_api_key", key);
+          } else {
+            window.__web98Key = "";
+            localStorage.removeItem("web98_api_key");
+          }
+          fetchModelList();
+          hideModal();
+        });
+
+        btnResetWorld.addEventListener("click", () => {
+          worldEl.value = baseWorld;
+        });
+
+        settingsEl.addEventListener("click", showModal);
+        btnCloseModal.addEventListener("click", hideModal);
+        modalBackdrop.addEventListener("click", (e) => {
+          if (e.target === modalBackdrop) hideModal();
+        });
+
+        function showModal() {
+          modalBackdrop.classList.add("show");
+          modalBackdrop.setAttribute("aria-hidden", "false");
+        }
+        function hideModal() {
+          modalBackdrop.classList.remove("show");
+          modalBackdrop.setAttribute("aria-hidden", "true");
+        }
+        window.showModal = showModal;
+        window.hideModal = hideModal;
+
+        if (modelEl) {
+          modelEl.addEventListener("focus", () => {
+            if (!modelEl.disabled) openModelSuggestions();
+          });
+          modelEl.addEventListener("input", () => {
+            if (!modelSuggIsOpen) return;
+            const q = (modelEl.value || "").toLowerCase();
+            const list = Array.isArray(modelBaseList) ? modelBaseList : [];
+            const filtered = q ? list.filter((s) => s.toLowerCase().includes(q)) : list;
+            renderModelSuggestions({ suggestions: filtered });
+          });
+          modelEl.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+              e.stopPropagation();
+              closeModelSuggestions();
+            } else if (e.key === "Enter") {
+              closeModelSuggestions();
+            }
+          });
+          modelEl.addEventListener("blur", () => {
+            setTimeout(() => {
+              closeModelSuggestions();
+            }, 200);
+          });
+        }
+      }
+
+      function fetchModelList() {
+        const key = ((typeof window !== "undefined" && window.__web98Key) || localStorage.getItem("web98_api_key") || "").trim();
+        const input = modelEl;
+        if (!input) return;
+        if (!key) {
+          input.disabled = true;
+          input.placeholder = "enter API key to load models";
+          return;
+        }
+        input.disabled = false;
+        input.placeholder = "e.g. moonshotai/kimi-k2-0905 (leave empty to use server default)";
+        const headers = {
+          Authorization: "Bearer " + key,
+          "X-Title": String((typeof window !== "undefined" && window.OPENROUTER_APP_NAME) || "web98 by koik"),
+        };
+        const baseUrl = (typeof window !== "undefined" && (window.OPENROUTER_API_BASE || "https://openrouter.ai/api/v1")) || "https://openrouter.ai/api/v1";
+        const url = String(baseUrl).replace(/\/+$/, "") + "/models";
+        fetch(url, { method: "GET", headers })
+          .then((res) => {
+            if (res && (res.status === 401 || res.status === 403)) {
+              input.disabled = true;
+              input.placeholder = "invalid API key";
+              return null;
+            }
+            if (!res || !res.ok) return null;
+            return res.json();
+          })
+          .then((data) => {
+            if (!data || !Array.isArray(data.data)) return;
+            const ids = data.data.map((m) => (m && (m.id || m.slug || m.model || ""))).filter(Boolean);
+            ids.sort((a, b) => a.localeCompare(b));
+            modelBaseList = ids;
+            if (document.activeElement === input && !input.disabled) {
+              const q = (input.value || "").toLowerCase();
+              const filtered = q ? ids.filter((s) => s.toLowerCase().includes(q)) : ids;
+              openModelSuggestions();
+              renderModelSuggestions({ suggestions: filtered });
+            }
+          })
+          .catch(() => {});
+      }
+
+      function positionModelSuggestions() {
+        if (!modelEl || !modelSuggBox) return;
+        const r = modelEl.getBoundingClientRect();
+        modelSuggBox.style.position = "fixed";
+        modelSuggBox.style.left = Math.round(r.left) + "px";
+        modelSuggBox.style.top = Math.round(r.bottom + 6) + "px";
+        modelSuggBox.style.width = Math.round(r.width) + "px";
+        modelSuggBox.style.maxHeight = "45vh";
+        modelSuggBox.style.zIndex = "9999";
+      }
+
+      function openModelSuggestions() {
+        if (!modelSuggBox) return;
+        if (modelSuggBox.parentNode !== document.body) {
+          document.body.appendChild(modelSuggBox);
+        }
+        modelSuggIsOpen = true;
+        positionModelSuggestions();
+        modelSuggBox.style.display = "block";
+        const list = Array.isArray(modelBaseList) ? modelBaseList : [];
+        renderModelSuggestions({ suggestions: list });
+        const onPos = () => positionModelSuggestions();
+        window.addEventListener("resize", onPos);
+        window.addEventListener("scroll", onPos, true);
+        modelSuggCleanup = () => {
+          window.removeEventListener("resize", onPos);
+          window.removeEventListener("scroll", onPos, true);
+        };
+      }
+
+      function closeModelSuggestions() {
+        if (!modelSuggBox) return;
+        modelSuggIsOpen = false;
+        modelSuggBox.style.display = "none";
+        if (typeof modelSuggCleanup === "function") {
+          try { modelSuggCleanup(); } catch {}
+          modelSuggCleanup = null;
+        }
+      }
+
+      function renderModelSuggestions({ suggestions = [], loading = false } = {}) {
+        if (!modelSuggBox) return;
+        if (loading) {
+          modelSuggBox.innerHTML = '<div class="sugg-placeholder"></div>';
+          return;
+        }
+        const items = (suggestions || [])
+          .slice(0, 200)
+          .map((id) => `<div class="sugg-item">${id}</div>`)
+          .join("");
+        modelSuggBox.innerHTML = items || '<div class="sugg-placeholder"></div>';
+        modelSuggBox.querySelectorAll(".sugg-item").forEach((el) => {
+          el.addEventListener("click", () => {
+            modelEl.value = el.textContent || "";
+            closeModelSuggestions();
+          });
+        });
+      }
+
+      function initToolbar() {
+        addressEl.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            navigate(addressEl.value, { userInitiated: true }); // User typed URL
+          }
+        });
+
+        let suggDebounce = null;
+        addressEl.addEventListener("focus", () => {
+          openSuggestions();
+        });
+        addressEl.addEventListener("input", () => {
+          if (!suggIsOpen) return;
+          // Debounce filtering only (no refetch)
+          if (suggDebounce !== null) clearTimeout(suggDebounce);
+          suggDebounce = setTimeout(() => {
+            const q = (addressEl.value || "").toLowerCase();
+            const list = Array.isArray(suggBase) ? suggBase : [];
+            const filtered = q ? list.filter((s) => s.toLowerCase().includes(q)) : list;
+            renderSuggestions({ suggestions: filtered, loading: false });
+            suggDebounce = null;
+          }, 150);
+        });
+        addressEl.addEventListener("blur", () => {
+          // Delay hiding to allow click on suggestion
+          setTimeout(() => {
+            closeSuggestions();
+          }, 200);
+        });
+
+        backEl.addEventListener("click", () => {
+          if (!backStack.length) return;
+          const prev = backStack.pop();
+          if (currentUrl) fwdStack.push(currentUrl);
+          setNavButtons();
+          // Navigate using cache if available
+          navigate(prev, { addToHistory: false, userInitiated: true }); // User-initiated nav
+        });
+
+        fwdEl.addEventListener("click", () => {
+          if (!fwdStack.length) return;
+          const next = fwdStack.pop();
+          if (currentUrl) backStack.push(currentUrl);
+          setNavButtons();
+          navigate(next, { addToHistory: false, userInitiated: true }); // User-initiated nav
+        });
+
+        homeEl.addEventListener("click", () => {
+          try { inflightController?.abort(); } catch {}
+          backStack.length = 0;
+          fwdStack.length = 0;
+          setNavButtons();
+          localStorage.removeItem(LS_LAST_URL);
+          addressEl.value = "";
+          showHome();
+        });
+
+        cancelEl.addEventListener("click", () => {
+          cancelGeneration();
+        });
+
+        setNavButtons();
+      }
+
+      function setNavButtons() {
+        backEl.disabled = backStack.length === 0;
+        fwdEl.disabled = fwdStack.length === 0;
+      }
+
+      function wrapWithCSP(html) {
+        // Strip meta refresh tags to prevent auto-navigation inside the iframe
+        html = String(html).replace(
+          /<meta[^>]*http-equiv=["']?refresh["']?[^>]*>/gi,
+          ""
+        );
+        // Let client-side interception handle navigation
+        const csp = [
+          "default-src 'self'",
+          "connect-src 'self' " + window.location.origin,
+          "img-src 'self' data: http: https:",
+          "media-src 'none'",
+          "font-src 'none'",
+          "object-src 'none'",
+          "frame-src 'none'",
+          "form-action 'none'",
+          "style-src 'unsafe-inline' 'self'",
+          "script-src 'unsafe-inline' 'self'",
+        ].join("; ");
+        const cspMeta = `<meta http-equiv='Content-Security-Policy' content="${csp}">`;
+        const refMeta = "<meta name='referrer' content='no-referrer'>";
+        const viewport =
+          "<meta name='viewport' content='width=device-width, initial-scale=1'>";
+        const baseTag = currentUrl ? `<base href="${escapeAttr(currentUrl)}">` : "";
+        const parentUrlJSON = JSON.stringify(currentUrl || "");
+        const parentOriginScript = `<script>window.__WEB98_PARENT_ORIGIN=${JSON.stringify(window.location.origin)};<\/script>`;
+        const gifProcessingScript = `<script>(async function() {
+                    async function fetchGifUrl(searchTerm) {
+                        try {
+                            const encodedSearchTerm = encodeURIComponent(searchTerm);
+                            const origin = (window.__WEB98_PARENT_ORIGIN || '');
+                            if (!origin) return null;
+                            const proxyUrl = origin + '/api/fetch-gif?q=' + encodedSearchTerm;
+                            const response = await fetch(proxyUrl);
+                            if (!response.ok) return null;
+                            const data = await response.json();
+                            return data.url || null;
+                        } catch (error) {
+                            console.error('Error fetching GIF:', error);
+                            return null;
+                        }
+                    }
+
+                    async function processGifImages() {
+                        const imgTags = document.querySelectorAll('img[alt]:not([src])');
+                        for (const img of imgTags) {
+                            const searchTerm = img.getAttribute('alt');
+                            if (searchTerm && !searchTerm.startsWith('http') && searchTerm.includes(' ')) {
+                                try {
+                                    const gifUrl = await fetchGifUrl(searchTerm);
+                                    if (gifUrl) {
+                                        img.src = gifUrl;
+                                    }
+                                } catch (error) {
+                                    console.error('Error processing GIF:', error);
+                                }
+                            }
+                        }
+                    }
+
+                    const scheduleProcess = () => { setTimeout(processGifImages, 50); };
+                    if (document.readyState === 'complete') {
+                        scheduleProcess();
+                    } else {
+                        window.addEventListener('load', scheduleProcess, { once: true });
+                    }
+
+                    const observer = new MutationObserver(function(mutations) {
+                        let shouldProcess = false;
+                        for (const mutation of mutations) {
+                            if (mutation.type === 'childList') {
+                                for (const node of mutation.addedNodes) {
+                                    if (node.nodeType === 1 && node.querySelectorAll && node.querySelectorAll('img[alt]:not([src])').length > 0) {
+                                        shouldProcess = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if (shouldProcess && !window.__gifCitiesPending) {
+                            window.__gifCitiesPending = true;
+                            setTimeout(() => { processGifImages(); window.__gifCitiesPending = false; }, 200);
+                        }
+                    });
+
+                    (function(){
+                        const startObserver = () => {
+                            try {
+                                const target = document.body || document.documentElement;
+                                if (target) observer.observe(target, { childList: true, subtree: true });
+                            } catch (_){ }
+                        };
+                        if (document.readyState === 'loading') {
+                            document.addEventListener('DOMContentLoaded', startObserver, { once: true });
+                        } else {
+                            startObserver();
+                        }
+                    })();
+                })();<\/script>`;
+        const interceptScript = "<script>(function(){try{var PARENT_URL=" + parentUrlJSON + ";function SEND(u){try{if(window.parent&&window.parent.postMessage){window.parent.postMessage({type:'web98:navigate',url:u},'*');}}catch(_){}}function PATCH_A(a){try{if(!a||a.__web98Patched)return;a.__web98Patched=true;var href=a.getAttribute('href')||'';a.addEventListener('click',function(ev){try{ev.preventDefault();ev.stopPropagation();ev.stopImmediatePropagation();try{var abs=new URL(href,document.baseURI);SEND(abs.toString());}catch(_){SEND(href);}}catch(_){}},true);}catch(_){}}function SCAN(){try{var list=document.querySelectorAll('a[href]');for(var i=0;i<list.length;i++){PATCH_A(list[i]);}}catch(_){}}var mo=new MutationObserver(function(muts){try{for(var i=0;i<muts.length;i++){var m=muts[i];if(m.type==='childList'){for(var j=0;j<m.addedNodes.length;j++){var n=m.addedNodes[j];if(n&&n.nodeType===1){if(n.matches&&n.matches('a[href]'))PATCH_A(n);var anchors=n.querySelectorAll?n.querySelectorAll('a[href]'):[];for(var k=0;k<anchors.length;k++){PATCH_A(anchors[k]);}}}}if(m.type==='attributes'&&m.target&&m.target.matches&&m.target.matches('a[href]')){PATCH_A(m.target);}}}catch(_){}});try{mo.observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['href']});}catch(_){}try{SCAN();document.addEventListener('DOMContentLoaded',function(){try{SCAN();}catch(_){}},{once:true});}catch(_){}function HANDLE_CLICK(e){try{var t=e.target&&e.target.closest?e.target.closest('a[href]'):null;if(!t)return;var href=t.getAttribute('href')||'';e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();try{var abs=new URL(href,document.baseURI);SEND(abs.toString());}catch(_){SEND(href);}}catch(_){}}function HANDLE_AUX(e){try{if(e.button!==1)return;var t=e.target&&e.target.closest?e.target.closest('a[href]'):null;if(!t)return;var href=t.getAttribute('href')||'';e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();try{var abs=new URL(href,document.baseURI);SEND(abs.toString());}catch(_){SEND(href);}}catch(_){}}function HANDLE_KEY(e){try{if(e.key!=='Enter')return;var t=document.activeElement&&document.activeElement.closest?document.activeElement.closest('a[href],button[href]'):null;if(!t)return;var href=t.getAttribute('href')||'';if(!href)return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();try{var abs=new URL(href,document.baseURI);SEND(abs.toString());}catch(_){SEND(href);}}catch(_){}}document.addEventListener('click',HANDLE_CLICK,true);document.addEventListener('auxclick',HANDLE_AUX,true);document.addEventListener('keydown',HANDLE_KEY,true);document.addEventListener('submit',function(e){try{var form=e.target;if(!form)return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();var action=form.getAttribute('action')||'';var u=new URL(action,document.baseURI);var fd=new FormData(form);fd.forEach(function(v,k){try{u.searchParams.append(k,typeof v==='string'?v:'');}catch(_){}});var method=(form.getAttribute('method')||'GET').toUpperCase();if(method==='POST'){u.searchParams.set('method','POST');}SEND(u.toString());}catch(_){/*noop*/}},true);try{window.open=function(u){try{var abs=new URL(u||'',document.baseURI);SEND(abs.toString());}catch(_){SEND(u||'');}return null;};}catch(_){}}catch(_){/*noop*/}})();<\/script>";
+
+        // If the HTML has a head, inject our metas, base, and interception script into it.
+        if (/<head[^>]*>/i.test(html)) {
+          return html.replace(
+            /<head([^>]*)>/i,
+            (m, attrs) =>
+              `<head${attrs}>${cspMeta}${refMeta}${viewport}${baseTag}${parentOriginScript}${gifProcessingScript}${interceptScript}`
+          );
+        }
+        // If it has an <html> but no head, create one.
+        if (/<html[^>]*>/i.test(html)) {
+          return html.replace(
+            /<html([^>]*)>/i,
+            (m, attrs) =>
+              `<html${attrs}><head>${cspMeta}${refMeta}${viewport}${baseTag}${parentOriginScript}${gifProcessingScript}${interceptScript}</head>`
+          );
+        }
+        // If it has a <body> only, wrap into a full doc.
+        if (/<body[^>]*>/i.test(html)) {
+          return `<!doctype html><html><head>${cspMeta}${refMeta}${viewport}${baseTag}${parentOriginScript}${gifProcessingScript}${interceptScript}</head>${html}</html>`;
+        }
+        // Otherwise wrap as a full doc with body.
+        return `<!doctype html><html><head>${cspMeta}${refMeta}${viewport}${baseTag}${parentOriginScript}${gifProcessingScript}${interceptScript}</head><body>${html}</body></html>`;
+      }
+      function homeHTML() {
+        return [
+      '<body bgcolor="#f2ceb1" text="#685f7d">',
+      '<center><h1><font color="#f17d78" face="Arial, sans-serif" size="6">WEB98</font></h1></center>',
+      '<center><marquee behavior="alternate" scrollamount="5" width="60%"><font color="#f17d78">welcome to the fantasy internet</font></marquee></center>',
+      '<br>',
+      '<center><table border="4" bordercolor="#f17d78" cellpadding="12" cellspacing="0" width="85%" bgcolor="#ffead9">',
+      '<tr><td>',
+      '<center><font size="+1" color="#f17d78"><b>❓ what is this?</b></font></center>',
+      '<p><font color="#685f7d">Web98 is a time machine that goes sideways.</font></p>',
+      '<p><font color="#685f7d">you type a url or some words. an LLM hallucinates the entire website into existence!</font></p>',
+      '<p><font color="#685f7d">every time you load it, it\'s a different fake site!</font></p>',
+      '</td></tr>',
+      '</table></center>',
+      '<br>',
+      '<center><table border="4" bordercolor="#f17d78" cellpadding="10" cellspacing="0" width="85%" bgcolor="#ffead9" style="box-shadow: 8px 8px 0 #f17c7891;">',
+      '<tr><td>',
+      '<font size="+1" color="#f17d78"><b>⚡ what you can do</b></font>',
+      '<ul>',
+      '<li><font color="#685f7d">ask for the New York Times, ask for a personal blog, ask for anything; all get 90s pages</font></li>',
+      '<li><font color="#685f7d">click links inside the fake pages and the LLM builds the next one knowing what came before (so chains almost make sense)</font></li>',
+      '<li><font color="#685f7d">post to forms; the server plays along and shows you the "result"</font></li>',
+      '<li><font color="#685f7d">swap the "world" setting to browse different dimensions (or decades, or vibes)</font></li>',
+      '<li><font color="#685f7d">gifs pull from GifCities and get stitched in automatically (often unrelated, always wonderful)</font></li>',
+      '<li><font color="#685f7d">everything runs in your browser; your OpenRouter key never meets our server</font></li>',
+      '</ul>',
+      '<center>',
+      '<a href="http://search.com/find?q=web98%20tour" style="text-decoration:none"><button style="background: #ffead9; border: 3px solid #f17d78; padding: 10px 18px; font-size: 14px; cursor: pointer; font-weight: bold; color: #f17d78; font-family: \'Courier New\', monospace; text-transform: uppercase; letter-spacing: 1px; box-shadow: 4px 4px 0 #f17c7891;">⚡ start browsing</button></a>',
+      '</center>',
+      '</td></tr>',
+      '</table></center>',
+      '<br>',
+      '<center><table border="4" bordercolor="#685f7d" cellpadding="10" cellspacing="0" width="85%" bgcolor="#ffead9">',
+      '<tr><td>',
+      '<center><font size="+1" color="#f17d78"><b>👍 how to start</b></font></center>',
+      '<p><font color="#685f7d"><b>1.</b> grab an <a href="https://openrouter.ai" target="_blank" style="color: #f17d78; font-weight: bold;">OpenRouter key</a><br>',
+      '<b>2.</b> open the ⚙️ settings, paste it, close it<br>',
+      '<b>3.</b> type something in the address bar</font></p>',
+      '</td></tr>',
+      '</table></center>',
+      '<br>',
+      '<center><table border="2" bordercolor="#685f7d" cellpadding="8" cellspacing="0" width="85%" bgcolor="#f2ceb1">',
+      '<tr><td>',
+      '<center><font size="-1" color="#685f7d">',
+      '<p>this is an astro-based port that runs completely in your browser.<br>',
+      'no server-side secrets, no tracking, just you and the infinite possibility space.</p>',
+      '<p style="margin-top: 10px;"><i>inspired by <a href="https://github.com/nate-parrott/web98" target="_blank" rel="noopener noreferrer" style="color: #f17d78; font-weight: bold;">Web98 by Nate Parrott</a></i> 💙</p>',
+      '</font></center>',
+      '</td></tr>',
+      '</table></center>',
+      '<br>',
+      '</body>'
+        ].join('');
+      }
+      function showHome() {
+        currentUrl = "";
+        const raw = homeHTML();
+        const withEmojis = processUnicodeEmojis(raw);
+        const html = wrapWithCSP(withEmojis);
+        try { viewer.srcdoc = html; } catch {}
+      }
+      function initViewer() {
+        viewer.srcdoc =
+          "<!doctype html><html><head><meta charset='utf-8'></head><body></body></html>";
+
+        // Handle navigation requests coming from the sandboxed iframe (link clicks, form submits)
+        window.addEventListener("message", (event) => {
+          // Accept navigate messages without strict source identity check (iframe may reload)
+          const data = event.data || {};
+          if (
+            data &&
+            data.type === "web98:navigate" &&
+            typeof data.url === "string"
+          ) {
+            const u = String(data.url || "");
+            addressEl.value = stripForAddressBar(u);
+            navigate(u);
+          }
+        });
+
+        // Intercept iframe navigation attempts (e.g., from meta refresh or script redirects)
+        let lastInterceptedUrl = "";
+        const checkIframeSrc = () => {
+          try {
+            const loc = viewer.contentWindow?.location?.href;
+            if (loc && loc !== "about:blank" && loc !== lastInterceptedUrl) {
+              lastInterceptedUrl = loc;
+              addressEl.value = stripForAddressBar(loc);
+              // Navigate back to about:blank to prevent the navigation
+              viewer.contentWindow.location.href = "about:blank";
+              // Use the intercepted URL as a prompt
+              navigate(loc);
+            }
+          } catch {
+            // Ignore cross-origin access errors
+          }
+        };
+        viewer.addEventListener("load", checkIframeSrc);
+        setInterval(checkIframeSrc, 100); // Poll in case load event is missed
+      }
+
+      function maybeRestoreLastSession() {
+        const last = localStorage.getItem(LS_LAST_URL);
+        if (last) {
+          addressEl.value = stripForAddressBar(last);
+          navigate(last, {
+            addToHistory: false,
+            preferCache: true,
+            ifEmptyUseSearch: false,
+          });
+        } else {
+          showHome();
+        }
+      }
+
+      // Navigation and generation
+      async function navigate(input, opts = {}) {
+        const {
+          addToHistory = true,
+          preferCache = true,
+          ifEmptyUseSearch = true,
+          prevContextHTML: providedPrevContext = undefined,
+          userInitiated = false, // New flag
+        } = opts;
+
+        const trimmed = String(input || "").trim();
+        if (!trimmed) {
+          if (ifEmptyUseSearch) return; // ignore empty
+          return;
+        }
+
+        const urlStr = coerceInputToURLString(trimmed);
+
+        // Determine previous-page context BEFORE updating currentUrl
+        const prevContextHTML =
+          providedPrevContext !== undefined
+            ? providedPrevContext
+            : currentUrl
+              ? htmlCache.get(currentUrl)
+              : undefined;
+
+        if (addToHistory && currentUrl && currentUrl !== urlStr) {
+          backStack.push(currentUrl);
+          fwdStack.length = 0; // clear forward
+          setNavButtons();
+        }
+
+        currentUrl = urlStr;
+        localStorage.setItem(LS_LAST_URL, currentUrl);
+        addressEl.value = stripForAddressBar(currentUrl);
+
+        // If cached, show instantly and stop
+        if (preferCache && htmlCache.has(urlStr)) {
+          showHTML(htmlCache.get(urlStr));
+          setLoading(false);
+          return;
+        }
+
+        // Generate via streaming, passing context flags
+        await generateFor(urlStr, { prevContextHTML, userInitiated });
+      }
+
+      function cancelGeneration() {
+        if (inflightController) {
+          inflightController.abort();
+          inflightController = null;
+        }
+        setLoading(false);
+      }
+
+      async function generateFor(urlStr, extra = {}) {
+        const { prevContextHTML = undefined, userInitiated = false } = extra;
+        cancelGeneration();
+        setLoading(true);
+        generatingFor = urlStr;
+
+        // Reset viewer document to a sandboxed shell with strict CSP
+        try {
+          viewer.srcdoc =
+            "<!doctype html><html><head><meta charset='utf-8'></head><body></body></html>";
+        } catch {}
+
+        const controller = new AbortController();
+        inflightController = controller;
+
+        const payload = {
+          url: urlStr,
+          world: normalizeWorld(localStorage.getItem(LS_WORLD) || ""),
+          model:
+            (localStorage.getItem(LS_MODEL) || "").trim() || undefined,
+          temperature:
+            parseFloat(localStorage.getItem(LS_TEMP) || "0.7") || 0.7,
+        };
+
+        try {
+          const apiKey =
+            (window.__web98Key ?? "").trim() ||
+            (localStorage.getItem("web98_api_key") || "").trim();
+          if (!apiKey)
+            throw new Error(
+              "OpenRouter API key required (open Settings)."
+            );
+
+          const { genPrompt } = await import("/lib/prompt.js");
+          const { browserStreamChatCompletion } = await import(
+            "/direct-openrouter-client.js"
+          );
+
+          const world = normalizeWorld(localStorage.getItem(LS_WORLD) || "");
+          const model =
+            (localStorage.getItem(LS_MODEL) || "").trim() || undefined;
+          const temperature =
+            parseFloat(localStorage.getItem(LS_TEMP) || "0.7") || 0.7;
+
+          const messages = genPrompt(urlStr, world);
+
+          // Handle context based on navigation type
+          if (userInitiated) {
+            // User typed a new URL - tell LLM to break context and be creative
+            messages.splice(messages.length - 1, 0, {
+              role: "system",
+              content:
+                "The user has navigated to a completely new website. Generate something unique and different from the previous page. Do not reference or continue the previous site's theme or content.",
+            });
+          } else if (prevContextHTML) {
+            // Link click - provide previous page for consistency
+            const MAX_CONTEXT_CHARS = 4000; // keep token usage reasonable
+            const snippet = String(prevContextHTML).slice(0, MAX_CONTEXT_CHARS);
+            messages.splice(messages.length - 1, 0, {
+              role: "system",
+              content:
+                "For consistency across pages, consider the previously visited page when generating this one. Here is the previous page's HTML (truncated):\n\n" +
+                snippet,
+            });
+          }
+
+          let acc = "";
+          const streamCtl = browserStreamChatCompletion(
+            {
+              messages,
+              model,
+              temperature,
+              signal: controller.signal,
+              apiKey,
+            },
+            {
+              onDelta: (delta) => {
+                let out = delta
+                  .replace(/^\s*```(?:html)?\s*/i, "")
+                  .replace(/```/g, "");
+                acc += out;
+                htmlCache.set(urlStr, acc);
+                if (generatingFor === urlStr) {
+                  const now = Date.now();
+                  const grew = acc.length - lastStreamLen;
+                  if ((now - lastStreamPaint) > 250 && grew > 200) {
+                    showHTML(acc);
+                    lastStreamPaint = now;
+                    lastStreamLen = acc.length;
+                    if (streamFlushTimer) { try { clearTimeout(streamFlushTimer); } catch {} streamFlushTimer = null; }
+                  } else {
+                    if (streamFlushTimer) { try { clearTimeout(streamFlushTimer); } catch {} }
+                    streamFlushTimer = setTimeout(() => {
+                      if (generatingFor === urlStr) {
+                        showHTML(acc);
+                        lastStreamPaint = Date.now();
+                        lastStreamLen = acc.length;
+                      }
+                      streamFlushTimer = null;
+                    }, 180);
+                  }
+                }
+              },
+            }
+          );
+          await streamCtl.promise;
+          // Final paint
+          if (generatingFor === urlStr) {
+            if (streamFlushTimer) { try { clearTimeout(streamFlushTimer); } catch {} streamFlushTimer = null; }
+            showHTML(acc);
+            lastStreamPaint = Date.now();
+            lastStreamLen = acc.length;
+          }
+        } catch (err) {
+          console.error(err);
+          // Show a simple error page
+          const msg =
+            err && err.message ? err.message : "Unknown error";
+          const errHTML = `<body>
+             <h2 style="color:#e11d48;font-family:ui-sans-serif,system-ui;-webkit-font-smoothing:antialiased;margin:16px;">Generation error</h2>
+             <div style="margin:16px;color:#e5e7eb;font-family:ui-sans-serif,system-ui;">${escapeHtml(msg)}</div>
+           </body>`;
+          htmlCache.set(urlStr, errHTML);
+          if (generatingFor === urlStr) {
+            showHTML(errHTML);
+          }
+        } finally {
+          if (generatingFor === urlStr) {
+            setLoading(false);
+          }
+        }
+      }
+
+      function showHTML(html) {
+        try {
+          const base = (window.location && window.location.origin ? window.location.origin : "") + "/Pixel Emoji Pack/";
+          viewer.srcdoc = wrapWithCSP(processUnicodeEmojis(html, base));
+        } catch {}
+      }
+
+      function setLoading(isLoading) {
+        cancelEl.style.display = isLoading ? "inline-flex" : "none";
+
+        if (isLoading) {
+          // Start fake progress advance to ~70%
+          progress = 0;
+          loadingBar.style.width = "0%";
+          clearInterval(loadingTick);
+          loadingTick = setInterval(() => {
+            // Ease towards 70%
+            if (progress < 70) {
+              progress += Math.max(0.25, (70 - progress) * 0.03);
+              if (progress > 70) progress = 70;
+              loadingBar.style.width = progress.toFixed(2) + "%";
+            }
+          }, 50);
+        } else {
+          // Complete and fade
+          clearInterval(loadingTick);
+          loadingBar.style.width = "100%";
+          setTimeout(() => {
+            loadingBar.style.width = "0%";
+          }, 250);
+        }
+      }
+
+      // Suggestions
+      async function openSuggestions() {
+        suggIsOpen = true;
+        renderSuggestions({ suggestions: [], loading: true });
+
+        const world = normalizeWorld(localStorage.getItem(LS_WORLD) || "");
+        const key = world;
+        if (suggKey === key && Array.isArray(suggBase) && suggBase.length) {
+          const q = (addressEl.value || "").toLowerCase();
+          const list = suggBase;
+          const filtered = q ? list.filter((s) => s.toLowerCase().includes(q)) : list;
+          renderSuggestions({ suggestions: filtered, loading: false });
+          return;
+        }
+
+        if (suggController) {
+          try { suggController.abort(); } catch {}
+        }
+        suggController = new AbortController();
+        suggKey = key;
+        suggBase = [];
+
+        const model =
+          (localStorage.getItem(LS_MODEL) || "").trim() || undefined;
+        const temperature =
+          parseFloat(localStorage.getItem(LS_TEMP) || "0.7") || 0.7;
+
+        try {
+          const { genSearchSuggestionsPrompt } = await import(
+            "/lib/prompt.js"
+          );
+          const { browserStreamChatCompletion } = await import(
+            "/direct-openrouter-client.js"
+          );
+
+          const apiKey =
+            (window.__web98Key ?? "").trim() ||
+            (localStorage.getItem("web98_api_key") || "").trim();
+          if (!apiKey) {
+            renderSuggestions({
+              suggestions: [],
+              error: "OpenRouter API key required (open Settings).",
+              loading: false,
+            });
+            return;
+          }
+
+          const messages = genSearchSuggestionsPrompt(world);
+
+          let text = "";
+          let lastLen = 0;
+
+          const suggCtl = browserStreamChatCompletion(
+            {
+              messages,
+              model,
+              temperature,
+              signal: suggController.signal,
+              apiKey,
+            },
+            {
+              onDelta: (delta) => {
+                text += delta;
+
+                // Sanitize code fences
+                let cleaned = text
+                  .replace(/^\s*```(?:json)?\s*/i, "")
+                  .replace(/```/g, "")
+                  .trim();
+
+                // Extract between first '[' and last ']'
+                const first = cleaned.indexOf("[");
+                if (first !== -1) {
+                  const last = cleaned.lastIndexOf("]");
+                  let candidate =
+                    last !== -1
+                      ? cleaned.slice(first, last + 1)
+                      : cleaned.slice(first);
+
+                  let arr = null;
+                  try {
+                    arr = JSON.parse(candidate);
+                  } catch {}
+                  if (!arr && !candidate.trimEnd().endsWith("]")) {
+                    try {
+                      arr = JSON.parse(candidate + "]");
+                    } catch {}
+                  }
+
+                  if (Array.isArray(arr)) {
+                    const strings = arr.filter((x) => typeof x === "string");
+                    if (strings.length !== lastLen) {
+                      lastLen = strings.length;
+                      suggBase = strings;
+                      const q = (addressEl.value || "").toLowerCase();
+                      const filtered = q ? strings.filter((s) => s.toLowerCase().includes(q)) : strings;
+                      renderSuggestions({
+                        suggestions: filtered,
+                        loading: true,
+                      });
+                    }
+                  }
+                }
+              },
+            }
+          );
+          await suggCtl.promise;
+
+          // Final emit
+          let cleaned = text
+            .replace(/^\s*```(?:json)?\s*/i, "")
+            .replace(/```/g, "")
+            .trim();
+          let final = [];
+          try {
+            const first = cleaned.indexOf("[");
+            const last = cleaned.lastIndexOf("]");
+            if (first !== -1 && last !== -1) {
+              final = JSON.parse(cleaned.slice(first, last + 1)) || [];
+            }
+          } catch {}
+          const base = Array.isArray(final)
+            ? final.filter((x) => typeof x === "string")
+            : [];
+          suggBase = base;
+          const q = (addressEl.value || "").toLowerCase();
+          const filtered = q ? base.filter((s) => s.toLowerCase().includes(q)) : base;
+          renderSuggestions({
+            suggestions: filtered,
+            loading: false,
+          });
+        } catch (e) {
+          if (!suggIsOpen) return;
+          renderSuggestions({
+            suggestions: [],
+            loading: false,
+          });
+        }
+      }
+
+      function closeSuggestions() {
+        suggIsOpen = false;
+        try {
+          suggController?.abort();
+        } catch {}
+        suggestionsBox.style.display = "none";
+        suggestionsBox.innerHTML = "";
+      }
+
+      function renderSuggestions({
+        suggestions,
+        loading = false,
+        error = "",
+      }) {
+        if (!suggIsOpen) return;
+
+        const items = [];
+        if (Array.isArray(suggestions)) {
+          for (const s of suggestions) {
+            items.push(
+              `<div class="sugg-item" data-url="${escapeAttr(s)}" title="${escapeAttr(s)}">${escapeHtml(s)}</div>`
+            );
+          }
+        }
+        if (loading) {
+          const needed = Math.max(0, 4 - items.length);
+          for (let i = 0; i < needed; i++) {
+            items.push(
+              `<div class="sugg-placeholder" aria-hidden="true"></div>`
+            );
+          }
+        }
+        if (error) {
+          // Only show a message for explicit errors (e.g., non-OK response)
+          items.push(
+            `<div class="sugg-item" role="status">${escapeHtml(error)}</div>`
+          );
+        }
+
+        suggestionsBox.innerHTML = items.join("");
+        suggestionsBox.style.display = items.length ? "block" : "none";
+
+        suggestionsBox.querySelectorAll(".sugg-item").forEach((el) => {
+          el.addEventListener("click", () => {
+            const url = el.getAttribute("data-url") || "";
+            addressEl.value = url;
+            closeSuggestions();
+            navigate(url, { userInitiated: true }); // User chose from suggestions
+          });
+        });
+      }
+
+      // Helpers
+      function coerceInputToURLString(input) {
+        const s = String(input || "").trim();
+        if (!s) return "";
+
+        // If it looks like a URL (contains ":" or ".")
+        if (s.includes(":") || s.includes(".")) {
+          // If it has a scheme, return as-is
+          if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(s)) return s;
+
+          // Otherwise, add https://
+          return "https://" + s;
+        }
+
+        // Treat as in-app search
+        const u = new URL("http://search.com/find");
+        u.searchParams.set("q", s);
+        return u.toString();
+      }
+
+      function stripForAddressBar(urlStr) {
+        try {
+          const url = new URL(urlStr);
+          // If it's the in-app search, show the query instead
+          if (url.hostname.toLowerCase() === "search.com") {
+            const q = url.searchParams.get("q");
+            if (q) return q;
+          }
+        } catch {
+          /* no-op */
+        }
+
+        let s = urlStr;
+        for (const prefix of ["https://", "http://"]) {
+          if (s.startsWith(prefix)) {
+            s = s.slice(prefix.length);
+            break;
+          }
+        }
+        if (s.startsWith("www.")) s = s.slice(4);
+        if (s.endsWith("/")) s = s.slice(0, -1);
+        return s;
+      }
+
+      async function safeText(res) {
+        try {
+          return await res.text();
+        } catch {
+          return "<no-body>";
+        }
+      }
+
+      function escapeHtml(s) {
+        return String(s).replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c]
+        );
+      }
+
+      function escapeAttr(s) {
+        return escapeHtml(s).replace(/"/g, "&quot;");
+      }
+
+      // Expose navigate for quick debugging:
+      window.__web98 = { navigate };
+    </script>
+  </body>
+</html>

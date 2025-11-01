@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1400">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #ffead9;
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4 {
+        stroke-width: 0px;
+      }
+
+      .cls-2 {
+        fill: #685f7d;
+      }
+
+      .cls-3 {
+        fill: #ff8a53;
+      }
+
+      .cls-4 {
+        fill: #f17d78;
+      }
+    </style>
+  </defs>
+  <g id="Camada_1" data-name="Camada 1">
+    <rect class="cls-1" width="1400" height="1400"/>
+    <g>
+      <path class="cls-3" d="M552.92,511.94c72.85,0,170.98-67.97,170.98-190.79h-125.64c0,99.26-105.98,123.86-128.78,123.86h-125.64v133.85h125.64c22.8,0,104.75,24.6,104.75,123.86h125.64c0-122.82-58.08-190.79-146.95-190.79Z"/>
+      <rect class="cls-2" x="343.83" y="321.15" width="125.64" height="381.58"/>
+      <path class="cls-4" d="M804.62,826.59c-22.8,0-104.75-24.6-104.75-123.86h-125.64c0,122.82,74.1,190.79,146.95,190.79-88.87,0-170.98,67.97-170.98,190.79h125.64c0-99.26,105.98-123.86,128.78-123.86h125.64v-133.85h-125.64Z"/>
+      <rect class="cls-2" x="930.26" y="642.41" width="125.64" height="441.89"/>
+      <rect class="cls-4" x="343.83" y="702.73" width="125.64" height="381.58"/>
+      <ellipse class="cls-3" cx="915.5" cy="511.94" rx="201.9" ry="196.25"/>
+    </g>
+  </g>
+</svg>

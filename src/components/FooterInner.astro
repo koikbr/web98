@@ -1,0 +1,43 @@
+---
+const repoUrl = "https://github.com/nate-parrott/web98";
+---
+
+<div class="site-footer-inner" aria-label="Footer attribution">
+  <a href="https://koik.com.br" target="_blank" rel="noopener noreferrer" class="made-by-koik">
+    <span class="made-by-text">made by</span>
+    <img src="/koik.svg" alt="koik logo" class="koik-logo" width="48" height="18" />
+  </a>
+  <span class="sep">•</span>
+  <span class="inspired">inspired by <a href={repoUrl} target="_blank" rel="noopener noreferrer">Web98 by Nate Parrott </a></span>
+</div>
+
+<style>
+  .site-footer-inner {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--icon);
+    margin-right: 8px;
+  }
+  .made-by-koik {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: inherit;
+    text-decoration: none;
+    line-height: 1;
+  }
+  .made-by-text {
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: .3px;
+  }
+  .koik-logo {
+    width: 48px;
+    height: 18px;
+    display: block;
+    transform: translateY(-1px);
+  }
+  .site-footer-inner .inspired a { color: inherit; text-decoration: underline; }
+  .sep { opacity: .6; }
+</style>

@@ -1,0 +1,24 @@
+{
+  "name": "web98-astro-port",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Astro reimplementation of Web98 that uses OpenRouter for LLM responses.",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "start:ssr": "node ./dist/server/entry.mjs",
+    "format": "prettier --write ."
+  },
+  "engines": {
+    "node": ">=18.14.0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@astrojs/node": "^9.5.0",
+    "astro": "^5.15.3",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.4"
+  }
+}

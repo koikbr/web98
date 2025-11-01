@@ -1,0 +1,227 @@
+---
+import FooterInner from '../components/FooterInner.astro';
+const title = "privacy policy - web98";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{title}</title>
+    <style>
+      :root {
+        --bg: #f2ceb1;
+        --panel: #ffead9;
+        --panel-2: #ffead9;
+        --accent: #f17d78;
+        --accent-2: #f17c7891;
+        --text: #f17d78;
+        --text-strong: #f17d78;
+        --border: #f17d78;
+        --border-2: #f17d78;
+        --danger: #f17d78;
+        --icon: #685f7d;
+        --toolbar-h: 92px;
+        --footer-h: 40px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Courier New', monospace;
+      }
+
+      .app {
+        height: 100vh;
+        width: 100%;
+        overflow: hidden;
+        padding-top: var(--toolbar-h);
+        padding-bottom: var(--footer-h);
+      }
+
+      .toolbar-wrap {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 20;
+        background: transparent;
+        padding: 12px 0;
+      }
+
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px;
+        max-width: 1200px;
+        margin: 0 auto;
+        background: var(--panel);
+        border: 4px solid var(--border);
+        box-shadow: 8px 8px 0 #f17c7891;
+      }
+
+      .btn {
+        appearance: none;
+        border: 3px solid var(--border);
+        background: var(--panel);
+        color: var(--text);
+        height: 40px;
+        min-width: 40px;
+        padding: 0 14px;
+        border-radius: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease, color 0.1s ease;
+        text-decoration: none;
+      }
+      .btn:hover:not(:disabled) {
+        background: var(--accent);
+        color: var(--bg);
+        box-shadow: 4px 4px 0 #f17c7891;
+        transform: translate(-2px, -2px);
+      }
+      .btn:active:not(:disabled) {
+        transform: translate(2px, 2px);
+        box-shadow: 0 0 0 #f17c7891;
+      }
+      .btn .hn {
+        color: var(--icon);
+        font-size: 20px;
+        display: inline-block;
+      }
+      .btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      .content-wrap {
+        position: fixed;
+        top: var(--toolbar-h);
+        left: 12px;
+        right: 12px;
+        bottom: var(--footer-h);
+        overflow: auto;
+      }
+      .content {
+        background: var(--panel);
+        border: 4px solid var(--border);
+        box-shadow: 8px 8px 0 #f17c7891;
+        padding: 18px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      h1, h2 {
+        margin: 0 0 12px;
+        color: var(--text-strong);
+      }
+      p, li {
+        margin: 0 0 12px;
+        line-height: 1.5;
+        color: var(--icon);
+      }
+      ul {
+        padding-left: 24px;
+        margin: 0 0 12px;
+      }
+      .content a {
+        color: var(--text-strong);
+        text-decoration: underline;
+      }
+
+      .footer {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: var(--footer-h);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        text-align: center;
+        border-top: 2px dashed var(--border);
+        background: var(--bg);
+      }
+
+      @media (max-width: 720px) {
+        .toolbar {
+          gap: 6px;
+        }
+        .content {
+          padding: 12px;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@hackernoon/pixel-icon-library@1.0.6/fonts/iconfont.css" />
+  </head>
+  <body>
+    <div class="app">
+      <div class="toolbar-wrap">
+        <div class="toolbar">
+          <a href="/" class="btn" title="Home" aria-label="Home"><i class="hn hn-home" aria-hidden="true"></i></a>
+          <strong style="margin-left:8px; text-transform: uppercase; letter-spacing:1px;">Privacy Policy</strong>
+        </div>
+      </div>
+
+      <div class="content-wrap">
+        <div class="content">
+          <h1>Privacy Policy</h1>
+          <p>This document explains what information is handled when you use this application. Your privacy is important to us, and our policy is simple: we do not collect or store your personal data.</p>
+          
+          <h2>Information We Do Not Collect</h2>
+          <p>We do not use any analytics, tracking pixels, or advertising networks. We do not collect, log, sell, or share any personal information, browsing history, or user activity.</p>
+          
+          <h2>Information Stored Locally on Your Device</h2>
+          <p>The application uses your browser’s <code>localStorage</code> to store your settings. This data remains on your computer and is never transmitted to us. The stored items are:</p>
+          <ul>
+            <li><code>web98_world</code>: The world description you provide.</li>
+            <li><code>web98_model</code>: Your preferred LLM model.</li>
+            <li><code>web98_temperature</code>: Your chosen temperature setting.</li>
+            <li><code>web98_last_url</code>: The last address you visited, restored locally from your browser’s localStorage on your next visit; not sent to our server.</li>
+            <li><code>web98_api_key</code>: Your OpenRouter API key.</li>
+          </ul>
+          
+          <h2>Information Transmitted to Third Parties</h2>
+          <p>Certain actions cause your browser to send data to third-party services:</p>
+          <ul>
+            <li><strong>OpenRouter.ai</strong>: To generate pages and suggestions, your browser sends your prompt (including the world description and the URL/query you entered) and your OpenRouter API key directly to the OpenRouter API. You can review their policies here: <a href="https://openrouter.ai/privacy" target="_blank" rel="noopener noreferrer">OpenRouter Privacy Policy</a>.</li>
+            <li><strong>gifcities.org</strong>: When a generated page includes a GIF, a request is made to our server-side proxy at <code>/api/fetch-gif</code>, which in turn fetches a GIF from gifcities.org. Your IP address is not forwarded to gifcities.org, but our server’s IP address is.</li>
+            <li><strong>jsDelivr CDN</strong>: The user interface loads an icon font from jsDelivr, a third-party Content Delivery Network. Your IP address is visible to them as part of that standard web request.</li>
+            <li><strong>Cloudflare (Tunnel & edge network)</strong>: Traffic to this site is proxied through Cloudflare Tunnel and served over Cloudflare’s network. Cloudflare may process your IP address, user agent, request metadata, and set security cookies (e.g., for bot management, load balancing, and abuse prevention) to protect the service and ensure performance. These activities are governed by Cloudflare’s policies, not ours. See: <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">Cloudflare Privacy Policy</a> and <a href="https://www.cloudflare.com/cookie-policy/" target="_blank" rel="noopener noreferrer">Cloudflare Cookie Policy</a>.</li>
+          </ul>
+          
+          <h2>Cookies</h2>
+          <p>We do not set any first‑party cookies. However, our infrastructure provider, Cloudflare, may set temporary security and performance cookies (for example, to mitigate abuse, manage load, or distinguish bots from legitimate traffic). Those cookies are controlled by Cloudflare and are subject to their policies, not ours. See: <a href="https://www.cloudflare.com/cookie-policy/" target="_blank" rel="noopener noreferrer">Cloudflare Cookie Policy</a>.</p>
+          
+          <h2>Data Security and Deletion</h2>
+          <p>Your API key is stored only in your browser's <code>localStorage</code>. You can delete all locally stored data at any time by clearing your browser's site data for this domain.</p>
+          
+          <h2>Contact</h2>
+          <p>If you have any questions about this privacy policy, please use the contact link available in the footer.</p>
+          
+          <p style="opacity:.8;">Last Updated: 2025-10-31</p>
+        </div>
+      </div>
+
+      <div class="footer">
+        <FooterInner />
+      </div>
+    </div>
+  </body>
+</html>
