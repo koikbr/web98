@@ -3,15 +3,12 @@
 ![web98](images/output.gif)
 
 <p align="center"> it works like any other browser: type a URL or a search query, and it <strong>loads a page!</strong> </p>
+<p align="center">but in this case, the page isn’t coming from the internet. it’s coming from the AI.</p>
 
 this is an Astro-based reimplementation of the [Web98](https://github.com/nate-parrott/web98) “fantasy internet simulator,” built to run on the web and use OpenRouter as the LLM provider.
 
 ### test the demo here
 https://web98.koik.com.br
-
-it works like any other browser: type a URL or a search query, and it loads a page!
-
-but in this case, the page isn’t coming from the internet. it’s coming from chatGPT. 
 
 the core experience matches the original app:
 - a “browser” UI with an address bar.
@@ -26,6 +23,15 @@ new features I thought it was worth implementing:
 - also a small set of pixelated emojis that fit into the vibe (provided by Fava Beans' [Free Pixel Art Emoji Pack](https://fava-beans.itch.io/free-pixel-art-emoji-pack))
 
 this port runs fully in the browser. users provide their OpenRouter API key in the Settings modal, and it's saved on your local storage, so no server-side OpenRouter secrets are used.
+
+for the live demo, check our [privacy policy](https://web98.koik.com.br/privacy), but, in short:
+
+* **no data collection:** the application does not collect, log, sell, or share your personal information or browsing activity.
+* **local storage only:** your settings and API key are stored on your device and never sent to the application's servers.
+* **third-party data sharing:**
+    * your prompt and API key are sent to OpenRouter to generate content. if you are concerned about data collection, use a model that follows their Zero Data Retention (ZDR) policy.
+    * your IP address is visible to jsDelivr and Cloudflare for delivering content and providing security.
+* **cookies:** the application does not set cookies, but its service provider, Cloudflare, may set temporary cookies for security and performance.
 
 
 ## quick start
